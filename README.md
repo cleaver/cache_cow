@@ -2,6 +2,8 @@
 
 [![Elixir Tests](https://github.com/cleaver/cache_cow/actions/workflows/ex-tests.yaml/badge.svg)](https://github.com/cleaver/cache_cow/actions/workflows/ex-tests.yaml)
 
+<img src="./cache_cow.png" height="200" width="200" />
+
 A simple implementation of caching using an Elixir GenServer.
 
 ## Installation
