@@ -6,6 +6,8 @@
 
 A simple implementation of caching using an Elixir GenServer.
 
+Using: Elixir 1.12 / Phoenix 1.5.9.
+
 ## Installation
 
 To install the application:
@@ -23,7 +25,7 @@ The goal of this project to provide a simple implementation of an in-memory key-
 
 - maintaining state while the application runs.
 - concurrency - you don't want competing processes to corrupt the cache due to a race condition
-- limited size - I've arbitrarily set it to just 5 slots.
+- limited size - I've arbitrarily set it to just 5 slots for testing purposes.
 - cache expiry - drop old cache values when it gets full.
 - cache keys - can be any Elixir type supported by [Map](https://hexdocs.pm/elixir/1.12/Map.html#content).
 - cache values - again, any supported Elixir type.
@@ -33,6 +35,8 @@ The goal of this project to provide a simple implementation of an in-memory key-
 ### Details
 
 The key component used is [GenServer](https://hexdocs.pm/elixir/1.12/GenServer.html#content) - a core Elixir module for implementing a server interface. This maintains state and provides concurrency, protecting against race conditions. [See: GenServer implementation](./lib/cache_cow/gen_server/cache_server.ex).
+
+The GenServer is automatically started a [Supervisor](https://hexdocs.pm/elixir/1.12/Supervisor.html), already provided by the Phoenix app.
 
 Cache data is stored in a Struct consisting of an `index` Map to store the key-value data and an `expiry` List to represent how recently a cache item has been accessed. (The head of the list is most recent.) [See: cache storage implementation](./lib/cache_cow/gen_server/storage/cache_storage.ex).
 
@@ -53,6 +57,75 @@ result =
   cached(x, fn ->
     Some.Slow.calculation(x)
   end)
+```
+
+## REST API
+
+There is a RESTful interface to give access to the cache server over HTTP.
+
+Notes:
+
+- CORS headers are set to accept "\*".
+- The REST API works for string data, although this could include JSON data in a string. Encoding and decoding is the responsibility of the client.
+- Non-string data stored using the native Elixir API cannot be retrieve using the REST API.
+
+### POST /api/cache
+
+Create or replace a key/value pair in the cache.
+
+Data (json):
+
+- key - (string) - the unique key for the value to be written to cache.
+- value - (string) - the value to be written to cache.
+
+Example:
+
+```bash
+curl --location --request POST 'http://localhost:4000/api/cache' \
+--header 'Content-Type: application/json' \
+--data-raw '{"key": "2", "value": "two"}'
+```
+
+Result:
+
+```json
+{ "message": "success" }
+```
+
+### GET /api/cache/{key}
+
+Retrieve a value from the cache by key.
+
+Parameters:
+
+- key - (string) - the key for the cache value to be retrieved
+
+Example:
+
+```bash
+curl --location --request GET 'http://localhost:4000/api/cache/2'
+```
+
+Result:
+
+```json
+{ "data": "two" }
+```
+
+### DELETE /api/cache
+
+Clear the entire cache.
+
+Example:
+
+```bash
+curl --location --request DELETE 'http://localhost:4000/api/cache'
+```
+
+Result:
+
+```json
+{ "message": "cache cleared" }
 ```
 
 ## Benchmarking with Fibonacci
