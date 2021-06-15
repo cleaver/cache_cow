@@ -21,7 +21,7 @@ defmodule CacheCow.Fibonacci do
   def naive_fibonacci(2), do: 1
 
   def naive_fibonacci(n) do
-    naive_fibonacci(n - 1) + naive_fibonacci(n - 2)
+    naive_fibonacci(n - 2) + naive_fibonacci(n - 1)
   end
 
   @spec cached_fibonacci(pos_integer) :: pos_integer
@@ -45,7 +45,7 @@ defmodule CacheCow.Fibonacci do
 
   def cached_fibonacci(n) do
     cached(n, fn ->
-      cached_fibonacci(n - 1) + cached_fibonacci(n - 2)
+      cached_fibonacci(n - 2) + cached_fibonacci(n - 1)
     end)
   end
 end
