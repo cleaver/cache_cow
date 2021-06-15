@@ -6,7 +6,7 @@ defmodule CacheCow.Util.BenchmarkTest do
   test "generates expected result" do
     test_function = fn x -> x * 2 end
 
-    assert capture_io(fn -> CacheCow.Util.Benchmark.time(test_function, [2]) end) =~ "Result: 4"
+    assert capture_io(fn -> Benchmark.time(test_function, 2) end) =~ "Result: 4"
   end
 
   test "prints execution time" do
@@ -16,7 +16,7 @@ defmodule CacheCow.Util.BenchmarkTest do
       x * x
     end
 
-    output = capture_io(fn -> CacheCow.Util.Benchmark.time(test_function, [3]) end)
+    output = capture_io(fn -> Benchmark.time(test_function, 3) end)
     %{"micros" => micros} = Regex.named_captures(~r/Time: (?<micros>\d+)/, output)
 
     # takes at least 100,000 microseconds
@@ -26,7 +26,7 @@ defmodule CacheCow.Util.BenchmarkTest do
   test "operates on a range" do
     test_function = fn x -> x * 2 end
 
-    assert capture_io(fn -> CacheCow.Util.Benchmark.time_range(test_function, 1..3) end) =~
+    assert capture_io(fn -> Benchmark.time_range(test_function, 1..3) end) =~
              ~r/Result: 2.+Result: 4 .+Result: 6/s
   end
 end
