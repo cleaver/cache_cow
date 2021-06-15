@@ -14,9 +14,9 @@ defmodule CacheCow.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: CacheCow.PubSub},
       # Start the Endpoint (http/https)
-      CacheCowWeb.Endpoint
+      CacheCowWeb.Endpoint,
       # Start the CacheServer
-      # {CacheCow.Worker, arg}
+      CacheCow.CacheServer
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
