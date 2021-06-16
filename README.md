@@ -197,3 +197,13 @@ For a more random execution of the cached Fibonacci calculation, the worst case 
 | 43  | 433,494,437   | 3,562,755  | 433,494,437   | 11   |
 | 44  | 701,408,733   | 5,821,718  | 701,408,733   | 11   |
 | 45  | 1,134,903,170 | 10,813,388 | 1,134,903,170 | 11   |
+
+## Next steps
+
+_Cache storage_: This implementation has cached stored in native in-memory Elixir data types. It would be possible to plug in different cache storage, replacing `CacheCow.CacheStorage`. Possibilities include: ETS, filesystem, PostgreSQL, or other database.
+
+_Scaling_: There is a single supervised GenServer. It would be possible to scale by dispatching the cache requests to multiple cache servers or even to multiple nodes. A dispatch function could send the request to the appropriate cache server based on the key. EG: a most basic dispatch on numeric key would be to send odd-numbered keys to cache server 1, and even-numbered keys to cache server 2.
+
+_REST API_: At present this is fairly limited, restricted to string values. The controller could encode and decode JSON data, or other formats for better interoperability with the native Elixir API. A few issues would need to be overcome as there is not a 1:1 correspondence between Elixir data types and JSON notation. (EG: tuples don't translate directly to JSON.)
+
+_Other_: Cleanup... The project was created with Ecto, anticipating that this could be used for either cache storage or a benchmarking example.
