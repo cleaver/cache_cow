@@ -1,10 +1,26 @@
 defmodule CacheCow.CacheStorage do
   alias __MODULE__
 
+  @moduledoc """
+  Manage the cache storage.
+  """
+
   defstruct index: %{}, expiry: []
 
   @max_cache 5
 
+  @doc """
+  Get a value from cache storage by key.
+
+  ## Parameters:
+
+  - storage: (%CacheStorage{} struct) - the cache storage.
+  - key: (any) - the key for the data to get.
+
+  ## Return: {value, storage}
+
+  """
+  @spec get(%CacheCow.CacheStorage{}, any()) :: {any(), %CacheCow.CacheStorage{}}
   def get(%CacheStorage{index: index, expiry: expiry} = _storage, key) do
     value = index[key]
 
@@ -18,6 +34,19 @@ defmodule CacheCow.CacheStorage do
     {value, %CacheStorage{index: index, expiry: new_expiry}}
   end
 
+  @doc """
+  Put a key/value pair into cache storage.
+
+  ## Parameters:
+
+  - storage: (%CacheStorage{} struct) - the cache storage.
+  - key: (any) - the key for the data to put.
+  - value: (any) - the key for the data to put
+
+  ## Return: storage
+
+  """
+  @spec put(%CacheCow.CacheStorage{}, any(), any()) :: %CacheCow.CacheStorage{}
   def put(%CacheStorage{index: index, expiry: expiry} = storage, key, value) do
     cond do
       Map.has_key?(index, key) ->
